@@ -1,0 +1,724 @@
+version: '3.8'
+
+services:
+
+  ##### web challenge start #####
+  ##### port start : 41xxx
+
+  MD5_01:
+    image: php:7.2-apache
+    container_name: md5_01
+    restart: always
+    volumes:
+      - ./src/MD5_01/html:/var/www/html:ro
+    ports:
+      - "41001:80"
+
+  MD5_02:
+    image: php:7.2-apache
+    container_name: md5_02
+    restart: always
+    volumes:
+      - ./src/MD5_02/html:/var/www/html:ro
+    ports:
+      - "41002:80"
+    depends_on:
+      - MD5_01
+
+  Info_Leakage_01:
+    image: php:7.2-apache
+    container_name: info_leakage_01
+    restart: always
+    volumes:
+      - ./src/Info_Leakage_01/html:/var/www/html:ro
+    ports:
+      - "41003:80"
+    depends_on:
+      - MD5_02
+
+  Info_Leakage_02:
+    image: php:7.2-apache
+    container_name: info_leakage_02
+    restart: always
+    volumes:
+      - ./src/Info_Leakage_02/html:/var/www/html:ro
+    ports:
+      - "41004:80"
+    depends_on:
+      - Info_Leakage_01
+
+  Info_Leakage_03:
+    image: php:7.2-apache
+    container_name: info_leakage_03
+    restart: always
+    volumes:
+      - ./src/Info_Leakage_03/html:/var/www/html:ro
+      - ./src/Info_Leakage_03/000-default.conf:/etc/apache2/sites-enabled/000-default.conf:ro
+    ports:
+      - "41005:80"
+    depends_on:
+      - Info_Leakage_02
+
+  Info_Leakage_04:
+    image: php:7.2-apache
+    container_name: info_leakage_04
+    restart: always
+    volumes:
+      - ./src/Info_Leakage_04/html:/var/www/html:ro
+    ports:
+      - "41006:80"
+    depends_on:
+      - Info_Leakage_03
+
+  HTTP_01:
+    image: php:7.2-apache
+    container_name: http_01
+    restart: always
+    volumes:
+      - ./src/HTTP_01/html:/var/www/html:ro
+    ports:
+      - "41007:80"
+    depends_on:
+      - Info_Leakage_04
+
+  HTTP_02:
+    image: php:7.2-apache
+    container_name: http_02
+    restart: always
+    volumes:
+      - ./src/HTTP_02/html:/var/www/html:ro
+    ports:
+      - "41008:80"
+    depends_on:
+      - HTTP_01
+
+  PHP_Deserialization_01:
+    image: php:7.2-apache
+    container_name: php_deserialization_01
+    restart: always
+    volumes:
+      - ./src/PHP_Deserialization_01/html:/var/www/html:ro
+    ports:
+      - "41009:80"
+    depends_on:
+      - HTTP_02
+
+  PHP_Deserialization_02:
+    image: php:7.2-apache
+    container_name: php_deserialization_02
+    restart: always
+    volumes:
+      - ./src/PHP_Deserialization_02/html:/var/www/html:ro
+    ports:
+      - "41010:80"
+    depends_on:
+      - PHP_Deserialization_01
+
+  PHP_Deserialization_03:
+    image: php:7.2-apache
+    container_name: php_deserialization_03
+    restart: always
+    volumes:
+      - ./src/PHP_Deserialization_03/html:/var/www/html:ro
+    ports:
+      - "41011:80"
+    depends_on:
+      - PHP_Deserialization_02
+
+  PHP_Deserialization_04:
+    image: php:7.2-apache
+    container_name: php_deserialization_04
+    restart: always
+    volumes:
+      - ./src/PHP_Deserialization_04/html:/var/www/html:ro
+    ports:
+      - "41012:80"
+    depends_on:
+      - PHP_Deserialization_03
+
+  PHP_Deserialization_05:
+    image: php:7.2-apache
+    container_name: php_deserialization_05
+    restart: always
+    volumes:
+      - ./src/PHP_Deserialization_05/html:/var/www/html:ro
+    ports:
+      - "41013:80"
+    depends_on:
+      - PHP_Deserialization_04
+
+  Phar_Deserialization_01:
+    image: php:7.2-apache
+    container_name: phar_deserialization_01
+    restart: always
+    volumes:
+      - ./src/Phar_Deserialization_01/html:/var/www/html:ro
+      - ./src/Phar_Deserialization_01/flag_14d30d11e44a1912e23f04e98649142a.txt:/flag_14d30d11e44a1912e23f04e98649142a.txt:ro
+    ports:
+      - '41014:80'
+    depends_on:
+      - PHP_Deserialization_05
+
+  Phar_Deserialization_02:
+    image: php:7.2-apache
+    container_name: phar_deserialization_02
+    restart: always
+    volumes:
+      - ./src/Phar_Deserialization_02/html:/var/www/html:ro
+      - ./src/Phar_Deserialization_02/flag_54d4039fd6f30de10f080a206027d71f.txt:/flag_54d4039fd6f30de10f080a206027d71f.txt:ro
+    ports:
+      - '41015:80'
+    depends_on:
+      - Phar_Deserialization_01
+
+  Emoji_01:
+    image: php:7.2-apache
+    container_name: emoji_01
+    restart: always
+    volumes:
+      - ./src/Emoji_01/html:/var/www/html:ro
+    ports:
+      - "41016:80"
+    depends_on:
+      - Phar_Deserialization_02
+
+  Emoji_02:
+    image: php:7.2-apache
+    container_name: emoji_02
+    restart: always
+    volumes:
+      - ./src/Emoji_02/html:/var/www/html:ro
+    ports:
+      - "41017:80"
+    depends_on:
+      - Emoji_01
+
+  XXE_01:
+    image: php:7.2-apache
+    container_name: xxe_01
+    restart: always
+    volumes:
+      - ./src/XXE_01/html:/var/www/html:ro
+      - ./src/XXE_01/flag.txt:/flag.txt:ro
+    ports:
+      - "41018:80"
+    depends_on:
+      - Emoji_02
+
+  XXE_02:
+    image: php:7.2-apache
+    container_name: xxe_02
+    restart: always
+    volumes:
+      - ./src/XXE_02/html:/var/www/html:ro
+      - ./src/XXE_02/flag.txt:/flag.txt:ro
+    ports:
+      - "41019:80"
+    depends_on:
+      - XXE_01
+
+  XXE_03:
+    image: php:7.2-apache
+    container_name: xxe_03
+    restart: always
+    volumes:
+      - ./src/XXE_03/html:/var/www/html:ro
+      - ./src/XXE_03/flag.txt:/flag.txt:ro
+    ports:
+      - "41020:80"
+    depends_on:
+      - XXE_02
+
+  XXE_04:
+    image: php:7.2-apache
+    container_name: xxe_04
+    restart: always
+    volumes:
+      - ./src/XXE_04/html:/var/www/html:ro
+      - ./src/XXE_04/setup.sh:/root/setup.sh:ro
+    command: ["sh", "/root/setup.sh"]
+    ports:
+      - "41021:80"
+    depends_on:
+      - XXE_03
+
+  XXE_05:
+    image: php:7.2-apache
+    container_name: xxe_05
+    restart: always
+    volumes:
+      - ./src/XXE_05/html:/var/www/html:ro
+      - ./src/XXE_05/flag.txt:/flag.txt:ro
+    ports:
+      - "41022:80"
+    depends_on:
+      - XXE_04
+
+  File_Upload_01:
+    build: src/File_Upload_01/.
+    image: file_upload_01
+    container_name: file_upload_01
+    restart: always
+    ports:
+      - "41023:80"
+    depends_on:
+      - XXE_05
+
+  File_Upload_02:
+    build: src/File_Upload_02/.
+    image: file_upload_02
+    container_name: file_upload_02
+    restart: always
+    ports:
+      - "41024:80"
+    depends_on:
+      - File_Upload_01
+
+  File_Upload_03:
+    build: src/File_Upload_03/.
+    image: file_upload_03
+    container_name: file_upload_03
+    restart: always
+    ports:
+      - "41025:80"
+    depends_on:
+      - File_Upload_02
+
+  File_Upload_04:
+    build: src/File_Upload_04/.
+    image: file_upload_04
+    container_name: file_upload_04
+    restart: always
+    ports:
+      - "41026:80"
+    depends_on:
+      - File_Upload_03
+
+  File_Upload_05:
+    build: src/File_Upload_05/.
+    image: file_upload_05
+    container_name: file_upload_05
+    restart: always
+    ports:
+      - "41027:80"
+    depends_on:
+      - File_Upload_04
+
+  Command_01:
+    build: src/Command_01/.
+    image: command_01
+    container_name: command_01
+    restart: always
+    dns: 8.8.8.8
+    ports:
+      - "41028:80"
+    depends_on:
+      - File_Upload_05
+
+  Command_02:
+    build: src/Command_02/.
+    image: command_02
+    container_name: command_02
+    restart: always
+    dns: 8.8.8.8
+    ports:
+      - "41029:80"
+    depends_on:
+      - Command_01
+
+  Command_03:
+    build: src/Command_03/.
+    image: command_03
+    container_name: command_03
+    restart: always
+    dns: 8.8.8.8
+    ports:
+      - "41030:80"
+    depends_on:
+      - Command_02
+
+  Command_04:
+    build: src/Command_04/.
+    image: command_04
+    container_name: command_04
+    restart: always
+    dns: 8.8.8.8
+    ports:
+      - "41031:80"
+    depends_on:
+      - Command_03
+
+  Command_05:
+    build: src/Command_05/.
+    image: command_05
+    container_name: command_05
+    restart: always
+    dns: 8.8.8.8
+    ports:
+      - "41032:80"
+    depends_on:
+      - Command_04
+
+  SSRF_00:
+    build: src/SSRF_00/.
+    image: ssrf_00
+    container_name: ssrf_00
+    restart: always
+    ports:
+      - "41033:80"
+    depends_on:
+      - Command_05
+
+  SSRF_01:
+    build: src/SSRF_01/.
+    image: ssrf_01
+    container_name: ssrf_01
+    restart: always
+    ports:
+      - "41034:80"
+    depends_on:
+      - SSRF_00
+
+  SSRF_02:
+    build: src/SSRF_02/.
+    image: ssrf_02
+    container_name: ssrf_02
+    restart: always
+    ports:
+      - "41035:80"
+    depends_on:
+      - SSRF_01
+
+  SSRF_03:
+    build: src/SSRF_03/.
+    image: ssrf_03
+    container_name: ssrf_03
+    restart: always
+    ports:
+      - "41036:80"
+    depends_on:
+      - SSRF_02
+
+  # SSRF_04:
+  #   build: src/SSRF_04/.
+  #   image: ssrf_04
+  #   container_name: ssrf_04
+  #   restart: always
+  #   ports:
+  #     - "41037:80"
+  #   depends_on:
+  #     - SSRF_04_redis
+
+  # SSRF_04_redis:
+  #   build:
+  #     context: src/SSRF_04/.
+  #     dockerfile: Dockerfile-redis
+  #   image: ssrf_04_redis
+  #   container_name: ssrf_04_redis
+  #   restart: always
+  #   depends_on:
+  #     - SSRF_03
+
+  SSRF_05:
+    build: src/SSRF_05/.
+    image: ssrf_05
+    container_name: ssrf_05
+    restart: always
+    ports:
+      - "41038:80"
+    depends_on:
+      - SSRF_05_MYSQL
+
+  SSRF_05_MYSQL:
+    image: mysql:5
+    container_name: ssrf_05_mysql
+    restart: always
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - "./src/SSRF_05/flag.sql:/docker-entrypoint-initdb.d/flag.sql:ro"
+    depends_on:
+      - SSRF_03
+
+  BabyFirst:
+    build: src/BabyFirst/.
+    image: babyfirst
+    container_name: babyfirst
+    restart: always
+    ports:
+      - "41039:80"
+
+  BabyFirst_Revenge:
+    build: src/BabyFirst_Revenge/.
+    image: babyfirst_revenge
+    container_name: babyfirst_revenge
+    restart: always
+    ports:
+      - "41040:80"
+    depends_on:
+      - BabyFirst
+
+  BabyFirst_Revenge_v2:
+    build: src/BabyFirst_Revenge_v2/.
+    image: babyfirst_revenge_v2
+    container_name: babyfirst_revenge_v2
+    restart: always
+    ports:
+      - "41041:80"
+    depends_on:
+      - BabyFirst_Revenge
+
+  pcre_waf:
+    build: src/pcre_waf/.
+    image: pcre_waf
+    container_name: pcre_waf
+    restart: always
+    ports:
+      - "41042:80"
+    depends_on:
+      - BabyFirst_Revenge_v2
+
+  Basic_XXE:
+    image: php:7.2-apache
+    container_name: basic_xxe
+    restart: always
+    volumes:
+      - ./src/Basic_XXE/html:/var/www/html:ro
+    ports:
+      - "41043:80"
+    depends_on:
+      - pcre_waf
+
+  Numeric:
+    image: php:7.2-apache
+    container_name: numeric
+    restart: always
+    volumes:
+      - ./src/Numeric/html:/var/www/html:ro
+    ports:
+      - "41044:80"
+    depends_on:
+      - Basic_XXE
+
+  FlagLab:
+    build: src/FlagLab/.
+    image: flaglab
+    container_name: flaglab
+    restart: always
+    hostname: 'gitlab.example.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://gitlab.example.com'
+        redis['bind']='127.0.0.1'
+        redis['port']=6379
+        gitlab_rails['initial_root_password']=File.read('/steg0_initial_root_password')
+    ports:
+      - '41045:80'
+    volumes:
+      - './src/FlagLab/steg0_initial_root_password:/steg0_initial_root_password'
+      - './src/FlagLab/flag.txt:/flag:ro'
+    depends_on:
+      - SSRF_05
+
+  ##### web chall end ######
+
+
+  ####################################################################################################
+
+
+  ##### pwn challenge start #####
+  ##### port start : 42xxx
+
+  BoF_1:
+    build: src/bof_1/.
+    image: bof_1
+    container_name: bof_1
+    restart: always
+    ports:
+      - "42001:1337"
+
+  BoF_2:
+    build: src/bof_2/.
+    image: bof_2
+    container_name: bof_2
+    restart: always
+    ports:
+      - "42002:1337"
+    privileged: true
+    depends_on:
+      - BoF_1
+
+  Pwn_1:
+    build: src/pwn_1/.
+    image: pwn_1
+    container_name: pwn_1
+    restart: always
+    ports:
+      - "42003:1337"
+    privileged: true
+    depends_on:
+      - BoF_2
+
+  Pwn_2:
+    build: src/pwn_2/.
+    image: pwn_2
+    container_name: pwn_2
+    restart: always
+    ports:
+      - "42004:1337"
+    privileged: true
+    depends_on:
+      - Pwn_1
+
+  Pwn_3:
+    build: src/pwn_3/.
+    image: pwn_3
+    container_name: pwn_3
+    restart: always
+    ports:
+      - "42005:1337"
+    privileged: true
+    depends_on:
+      - Pwn_2
+
+  Pwn_4:
+    build: src/pwn_4/.
+    image: pwn_4
+    container_name: pwn_4
+    restart: always
+    ports:
+      - "42006:1337"
+    privileged: true
+    depends_on:
+      - Pwn_3
+
+  Pwn_5:
+    build: src/pwn_5/.
+    image: pwn_5
+    container_name: pwn_5
+    restart: always
+    ports:
+      - "42007:1337"
+    privileged: true
+    depends_on:
+      - Pwn_4
+
+  Pwn_6:
+    build: src/pwn_6/.
+    image: pwn_6
+    container_name: pwn_6
+    restart: always
+    ports:
+      - "42008:1337"
+    privileged: true
+    depends_on:
+      - Pwn_5
+
+  Pwn_7:
+    build: src/pwn_7/.
+    image: pwn_7
+    container_name: pwn_7
+    restart: always
+    ports:
+      - "42009:1337"
+    privileged: true
+    depends_on:
+      - Pwn_6
+    volumes:
+      - "./src/pwn_7/share:/home/ctf:ro"
+      - "./src/pwn_7/xinetd:/etc/xinetd.d/ctf:ro"
+      - "./src/pwn_7/xinetd.conf:/etc/xinetd.conf:ro"
+
+  Pwn_8:
+    build: src/pwn_8/.
+    image: pwn_8
+    container_name: pwn_8
+    restart: always
+    ports:
+      - "42010:1337"
+    privileged: true
+    depends_on:
+      - Pwn_7
+    volumes:
+      - "./src/pwn_8/share:/home/ctf:ro"
+      - "./src/pwn_8/xinetd:/etc/xinetd.d/ctf:ro"
+      - "./src/pwn_8/xinetd.conf:/etc/xinetd.conf:ro"
+
+  Pwn_9:
+    build: src/pwn_9/.
+    image: pwn_9
+    container_name: pwn_9
+    restart: always
+    ports:
+      - "42011:1337"
+    privileged: true
+    depends_on:
+      - Pwn_8
+    volumes:
+      - "./src/pwn_9/share:/home/ctf:ro"
+      - "./src/pwn_9/xinetd:/etc/xinetd.d/ctf:ro"
+      - "./src/pwn_9/xinetd.conf:/etc/xinetd.conf:ro"
+
+  sumarr:
+    build: src/sumarr/.
+    image: sumarr
+    container_name: sumarr
+    restart: always
+    ports:
+      - "42012:1337"
+
+  ##### pwn chall end ######
+
+
+  ####################################################################################################
+
+
+  ##### crypto challenge start #####
+  ##### port start : 43xxx
+
+  BabyAES:
+    build: src/BabyAES/.
+    image: babyaes
+    container_name: babyaes
+    restart: always
+    ports:
+      - "43001:1337"
+    depends_on:
+      - "SSRF_00"
+
+  ##### crypto chall end ######
+
+
+  ####################################################################################################
+
+
+  ##### reverse challenge start #####
+  ##### port start : 44xxx
+
+  keygenme_01:
+    build: src/keygenme_01/.
+    image: keygenme_01
+    container_name: keygenme_01
+    restart: always
+    ports:
+      - "44001:1337"
+
+  ##### reverse chall end ######
+
+
+  ####################################################################################################
+
+
+  ##### misc challenge start #####
+  ##### port start : 45xxx
+
+  ProFTPD_1.3.5:
+    build: src/ProFTPD_1.3.5/.
+    image: proftpd_1.3.5
+    container_name: proftpd_1.3.5
+    restart: always
+    ports:
+      - "45001:21"
+      - "45002:80"
+
+  ##### misc chall end ######
