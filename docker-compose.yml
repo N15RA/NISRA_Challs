@@ -447,6 +447,8 @@ services:
     restart: always
     ports:
       - "41039:80"
+    depends_on:
+      - SSRF_05
 
   BabyFirst_Revenge:
     build: src/BabyFirst_Revenge/.
