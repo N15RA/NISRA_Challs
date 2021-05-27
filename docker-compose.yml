@@ -438,7 +438,7 @@ services:
     volumes:
       - "./src/SSRF_05/flag.sql:/docker-entrypoint-initdb.d/flag.sql:ro"
     depends_on:
-      - SSRF_03
+      - SSRF_04
 
   BabyFirst:
     build: src/BabyFirst/.
