@@ -4,7 +4,7 @@ LABEL maintainer="theo@nisra.net"
 
 RUN set -ex \
     && yum -y update \
-    && yum -y install gcc-c++ tcl wget make cronie
+    && yum -y install initscripts gcc-c++ tcl wget make cronie
 
 RUN set -ex \
     && mkdir -p /usr/src/redis \
