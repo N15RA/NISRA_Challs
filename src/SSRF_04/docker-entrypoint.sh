@@ -1,4 +1,5 @@
 #!/bin/sh
+
 set -e
 
 # first arg is `-f` or `--some-option`
@@ -7,6 +8,6 @@ if [ "${1#-}" != "$1" ] || [ "${1%.conf}" != "$1" ]; then
 	set -- redis-server "$@"
 fi
 
-service crond start
+crond -n &
 
 exec "$@"

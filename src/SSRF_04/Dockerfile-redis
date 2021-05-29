@@ -1,10 +1,10 @@
-FROM centos:7
+FROM centos:8
 
 LABEL maintainer="theo@nisra.net"
 
 RUN set -ex \
     && yum -y update \
-    && yum -y install initscripts gcc-c++ tcl wget make cronie
+    && yum -y install gcc-c++ tcl wget make cronie
 
 RUN set -ex \
     && mkdir -p /usr/src/redis \
@@ -26,5 +26,4 @@ RUN set -ex && \
 
 EXPOSE 6379
 
-ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
-CMD ["redis-server"]
+CMD ["/usr/local/bin/docker-entrypoint.sh", "redis-server"]
